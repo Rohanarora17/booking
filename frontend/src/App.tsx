@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 import Layout from './layouts/layout';
 import Register from './pages/Register';
+import SignIn from './pages/SignIn';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         </Layout>}></Route>
         <Route path = '/register' element = {<Layout>
           <Register></Register>
+        </Layout>}></Route>
+        <Route path = '/sign-in' element = {<Layout>
+          <SignIn></SignIn>
         </Layout>}></Route>
         <Route path = '*' element = {<Navigate to = "/"></Navigate>} />
       </Routes>
