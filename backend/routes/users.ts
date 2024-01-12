@@ -49,7 +49,9 @@ router.post('/register',[
             maxAge:60*60*24*7,
         })
         console.log('cookie created');
-        return res.sendStatus(200);
+        return res.status(200).send({
+            msg:"user registered"
+        });
 
 
  
