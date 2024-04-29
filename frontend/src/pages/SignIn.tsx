@@ -2,38 +2,45 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client";
 import { useAppContext } from "../contexts/AppContext";
-import { Link, useNavigate } from "react-router-dom";
-export type SignInFormData ={
-    email:string;
-    password:string;
-}
-function SignIn(){
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
-    const {showToast} = useAppContext();
-    const {register, handleSubmit,formState:{errors}} =useForm<SignInFormData>();
-    const mutation = useMutation(apiClient.signIn,{
-        onSuccess: async ()=>{
-            showToast({message:"Sign in success", type:"SUCCESS"});
-            await queryClient.invalidateQueries('validateToken');
-            navigate('/');
-        },
-        onError:(error:Error)=>{
-            showToast({message:error.message, type:"ERROR"}); 
-            
-        }
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-    })
+export type SignInFormData = {
+  email: string;
+  password: string;
+};
 
-    const handleData = handleSubmit((data)=>{
-        mutation.mutate(data);
-    
-    })
-    
-    return(
-        <form onSubmit= {handleData} className="flex flex-col gap-5">
-            <h2 className="text-3xl font-bold">Sign In</h2>
-            <label className="text-gray-700 text-sm font-bold flex-1">
+const SignIn = () => {
+  const { showToast } = useAppContext();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const location = useLocation();
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<SignInFormData>();
+
+  const mutation = useMutation(apiClient.signIn, {
+    onSuccess: async () => {
+      showToast({ message: "Sign in Successful!", type: "SUCCESS" });
+      await queryClient.invalidateQueries("validateToken");
+      navigate(location.state?.from?.pathname || "/");
+    },
+    onError: (error: Error) => {
+      showToast({ message: error.message, type: "ERROR" });
+    },
+  });
+
+  const onSubmit = handleSubmit((data) => {
+    mutation.mutate(data);
+  });
+
+  return (
+    <form className="flex flex-col gap-5" onSubmit={onSubmit}>
+      <h2 className="text-3xl font-bold">Sign In</h2>
+      <label className="text-gray-700 text-sm font-bold flex-1">
         Email
         <input
           type="email"
@@ -61,9 +68,12 @@ function SignIn(){
           <span className="text-red-500">{errors.password.message}</span>
         )}
       </label>
-      <span className = "flex items-center justify-between">
+      <span className="flex items-center justify-between">
         <span className="text-sm">
-            Not Registered? <Link className = "underline" to='/register'>Create an account here</Link>
+          Not Registered?{" "}
+          <Link className="underline" to="/register">
+            Create an account here
+          </Link>
         </span>
         <button
           type="submit"
@@ -72,8 +82,8 @@ function SignIn(){
           Login
         </button>
       </span>
-        </form>
-    )
-}
+    </form>
+  );
+};
 
-export default SignIn
+export default SignIn;
